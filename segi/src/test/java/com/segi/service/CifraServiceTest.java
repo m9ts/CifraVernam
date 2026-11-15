@@ -17,7 +17,8 @@ public class CifraServiceTest {
 
         String resultObtido = cifraService.cifrar("OLA", "CHT");
 
-        System.out.println("Texto cifrado: " + resultObtido);
+        //System.out.println("Texto cifrado: " + resultObtido);
+        assertEquals(resultEsperado, resultObtido);
     }
 
     @Test
@@ -33,4 +34,28 @@ public class CifraServiceTest {
         System.out.println("Exceção lançada");
     }
 
+    @Test
+    void testIdaEVolta() {
+        String cifrado = cifraService.cifrar("OLA", "CHT");
+        String decifrado = cifraService.decifrar(cifrado, "CHT");
+        assertEquals("OLA", decifrado);
+    }
+    @Test
+    void testExcecaoTamDifDEC() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> cifraService.decifrar("0000", "CHT")
+        );
+
+        System.out.println("Exceção lançada");
+    }
+    @Test
+    void testExcecaoCaracDif() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> cifraService.decifrar("000011111111111111111111111x", "CHT")
+        );
+
+        System.out.println("Exceção lançada");
+    }
 }

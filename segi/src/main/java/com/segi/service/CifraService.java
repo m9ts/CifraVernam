@@ -31,4 +31,25 @@ public class CifraService {
 
         return resultado.toString();
     }
+    public String decifrar(String textoCifrado, String chave) {
+
+        // verifica se o texto cifrado que é do mesmo tamanho que a chave
+        if (textoCifrado.length() != chave.length() * 8) {
+            throw new IllegalArgumentException("O texto cifrado deve ter 8 bits para cada caractere da chave!");
+        }
+        if (!textoCifrado.matches("[01]+")) {
+            throw new IllegalArgumentException("Texto com caracteres especiais");
+        }
+        StringBuilder resultado = new StringBuilder();
+
+        for (int i = 0; i < chave.length(); i++) {
+            String grupo = textoCifrado.substring(i * 8, (i*8) + 8);
+            int binParaDecimal = Integer.parseInt(grupo, 2);
+            int xorDecChave = binParaDecimal ^ chave.charAt(i);
+            char letra = (char)xorDecChave;
+            resultado.append(letra);
+        }
+        return resultado.toString();
+    }
+
 }
