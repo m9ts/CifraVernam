@@ -108,7 +108,6 @@ Com a API em execução, a documentação interativa fica disponível em:
 A versão hospedada também está no ar, com a mesma documentação:
 
 - Swagger UI: https://segi-cifravernam.onrender.com/swagger-ui/index.html
-- API: https://segi-cifravernam.onrender.com
 
 ## Erros
 
