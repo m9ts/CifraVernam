@@ -1,0 +1,13 @@
+# Blueprint do Render — https://render.com/docs/blueprint-spec
+# Ao conectar este repositório no Render, ele lê este arquivo e cria o serviço pronto.
+services:
+  - type: web
+    name: segi-cifravernam
+    runtime: java
+    rootDir: segi
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/segi-0.0.1-SNAPSHOT.jar
+    plan: free
+    envVars:
+      - key: JAVA_VERSION
+        value: 17
