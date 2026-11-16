@@ -112,6 +112,15 @@ curl -X POST http://localhost:8080/decifrar \
   -d '{"textoCifrado":"000011000000010000010101","chave":"CHT"}'
 ```
 
+## Documentação (Swagger UI)
+
+Com a API em execução, a documentação interativa (OpenAPI/Swagger) fica disponível em:
+
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- JSON OpenAPI: `http://localhost:8080/v3/api-docs`
+
+Pela interface é possível executar os dois endpoints direto do navegador.
+
 ## Erros
 
 Requisições inválidas retornam o status **400 Bad Request** com um corpo JSON no formato:
