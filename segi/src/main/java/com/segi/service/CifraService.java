@@ -3,19 +3,22 @@ package com.segi.service;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+
 @Service
 public class CifraService {
 
     public String cifrar(String textoClaro, String chave) {
 
-        // validação do tamanho da chave
-        if (textoClaro.length() != chave.length()) {
-            throw new IllegalArgumentException("O texto claro e a chave devem ter o mesmo tamanho!");
-        }
+        // converte a String em bytes usando UTF-8
+        byte[] textoBytes = textoClaro.getBytes(StandardCharsets.UTF_8);
+        byte[] chaveBytes = chave.getBytes(StandardCharsets.UTF_8);
 
-        // getBytes converte cada caractere da String em um byte correspondente ao código ASCII
-        byte[] textoBytes = textoClaro.getBytes(StandardCharsets.US_ASCII);
-        byte[] chaveBytes = chave.getBytes(StandardCharsets.US_ASCII);
+        // compara em bytes
+        // caracteres com acento ocupam mais de 1 byte em UTF-8
+        if (textoBytes.length != chaveBytes.length) {
+            throw new IllegalArgumentException("O texto claro e a chave devem ter o mesmo tamanho em bytes! (texto: "
+                    + textoBytes.length + ", chave: " + chaveBytes.length + ")");
+        }
 
         // acumula os resultados de cada iteração do for, até formar o texto cifrado completo
         StringBuilder resultado = new StringBuilder();
@@ -35,23 +38,25 @@ public class CifraService {
     }
     public String decifrar(String textoCifrado, String chave) {
 
-        // verifica se o texto cifrado que é do mesmo tamanho que a chave
-        if (textoCifrado.length() != chave.length() * 8) {
-            throw new IllegalArgumentException("O texto cifrado deve ter 8 bits para cada caractere da chave!");
+        byte[] chaveBytes = chave.getBytes(StandardCharsets.UTF_8);
+
+        // verifica se o texto cifrado é do mesmo tamanho que a chave
+        if (textoCifrado.length() != chaveBytes.length * 8) {
+            throw new IllegalArgumentException("O texto cifrado deve ter 8 bits para cada byte da chave!");
         }
         if (!textoCifrado.matches("[01]+")) {
-            throw new IllegalArgumentException("A string cifrada só pode contar 0 e 1!");
+            throw new IllegalArgumentException("A string cifrada só pode conter 0 e 1!");
         }
-        StringBuilder resultado = new StringBuilder();
 
-        for (int i = 0; i < chave.length(); i++) {
+        // array que guarda o resultado do XOR de cada byte do loop
+        byte[] resultadoBytes = new byte[chaveBytes.length];
+
+        for (int i = 0; i < chaveBytes.length; i++) {
             String grupo = textoCifrado.substring(i * 8, (i*8) + 8);
             int binParaDecimal = Integer.parseInt(grupo, 2);
-            int xorDecChave = binParaDecimal ^ chave.charAt(i);
-            char letra = (char)xorDecChave;
-            resultado.append(letra);
+            resultadoBytes[i] = (byte) (binParaDecimal ^ chaveBytes[i]);
         }
-        return resultado.toString();
+        return new String(resultadoBytes, StandardCharsets.UTF_8);
     }
 
 }
