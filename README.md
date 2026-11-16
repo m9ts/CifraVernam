@@ -9,85 +9,71 @@ API REST em Java (Spring Boot) que cifra e decifra mensagens usando a **Cifra de
 A cifra aplica a operação XOR, bit a bit, entre cada caractere do texto e o caractere correspondente da chave.
 
 - A **chave deve ter exatamente o mesmo tamanho do texto**, como na definição da Cifra de Vernam.
-- O texto cifrado é devolvido como uma sequência de bits (`0` e `1`), com 8 bits para cada caractere. Por isso, o texto cifrado tem sempre 8 vezes o tamanho da chave.
-- Use apenas caracteres da tabela ASCII (letras sem acento, números e símbolos do teclado). Caracteres fora do ASCII, como `ç` ou `é`, não são suportados.
+- O texto cifrado é devolvido como uma sequência de bits (`0` e `1`), com 8 bits por caractere, ou seja, 8 vezes o tamanho da chave.
+- Use apenas caracteres ASCII (letras sem acento, números e símbolos do teclado).
 
 Exemplo: o texto `OLA` com a chave `CHT` gera `000011000000010000010101`.
 
 ## Requisitos
 
 - Java 17 ou superior
-- Conexão com a internet na primeira execução (o Maven Wrapper baixa o Maven e as dependências)
+- Internet na primeira execução (o Maven Wrapper baixa o Maven e as dependências)
 - Porta `8080` livre
 
-Não é necessário instalar o Maven, o projeto já inclui o Maven Wrapper (`mvnw`).
+Não é necessário instalar o Maven: o projeto inclui o Maven Wrapper (`mvnw`).
 
 ## Como executar a API
 
-Abra um terminal na pasta `segi` (a pasta que contém o arquivo `pom.xml`) e execute:
+1. Abra um terminal na pasta `segi` (a pasta que contém o `pom.xml`).
+2. Execute:
 
-**Windows**
+   **Windows**
 
-```
-.\mvnw.cmd spring-boot:run
-```
+   ```
+   .\mvnw.cmd spring-boot:run
+   ```
 
-**Linux / macOS**
+   **Linux / macOS**
 
-```
-./mvnw spring-boot:run
-```
+   ```
+   ./mvnw spring-boot:run
+   ```
 
-Quando aparecer a linha `Started SegiApplication`, a API estará disponível em `http://localhost:8080`.
+3. Quando aparecer a linha `Started SegiApplication`, a API estará no ar em `http://localhost:8080`.
+4. Para encerrar, pressione `Ctrl + C`.
 
-Para encerrar, pressione `Ctrl + C` no terminal.
-
-> Se aparecer um erro como `release version 17 not supported` ou `JAVA_HOME`, o Java do computador é anterior ao 17 ou a variável `JAVA_HOME` aponta para uma versão antiga. Aponte `JAVA_HOME` para um JDK 17 ou superior e execute o comando novamente.
+> Se aparecer erro como `release version 17 not supported` ou `JAVA_HOME`, o Java do computador é anterior ao 17 ou a variável `JAVA_HOME` aponta para uma versão antiga. Aponte `JAVA_HOME` para um JDK 17 ou superior e tente novamente.
 
 ## Endpoints
 
-Os dois endpoints aceitam apenas o método **POST**, com corpo em JSON (`Content-Type: application/json`). Abrir os endereços no navegador mostra um erro `405 Method Not Allowed`, o que é esperado, pois o navegador usa GET.
+Os dois endpoints aceitam apenas **POST** com corpo em JSON (`Content-Type: application/json`). Abrir os endereços no navegador mostra `405 Method Not Allowed`, o que é esperado, pois o navegador usa GET.
 
 ### POST `/cifrar`
 
-Recebe o texto claro e a chave (mesmo tamanho) e devolve o texto cifrado em bits.
-
-Requisição:
+Recebe o texto claro e a chave (mesmo tamanho, máximo 255 caracteres) e devolve o texto cifrado em bits.
 
 ```json
-{
-  "textoClaro": "OLA",
-  "chave": "CHT"
-}
+{ "textoClaro": "OLA", "chave": "CHT" }
 ```
 
 Resposta (`200 OK`):
 
 ```json
-{
-  "textoCifrado": "000011000000010000010101"
-}
+{ "textoCifrado": "000011000000010000010101" }
 ```
 
 ### POST `/decifrar`
 
-Recebe o texto cifrado (em bits) e a chave e devolve o texto claro.
-
-Requisição:
+Recebe o texto cifrado em bits (máximo 2048 caracteres) e a chave, e devolve o texto claro.
 
 ```json
-{
-  "textoCifrado": "000011000000010000010101",
-  "chave": "CHT"
-}
+{ "textoCifrado": "000011000000010000010101", "chave": "CHT" }
 ```
 
 Resposta (`200 OK`):
 
 ```json
-{
-  "textoClaro": "OLA"
-}
+{ "textoClaro": "OLA" }
 ```
 
 ## Exemplos de chamada
@@ -114,21 +100,22 @@ curl -X POST http://localhost:8080/decifrar \
 
 ## Documentação (Swagger UI)
 
-Com a API em execução, a documentação interativa (OpenAPI/Swagger) fica disponível em:
+Com a API em execução, a documentação interativa fica disponível em:
 
 - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 - JSON OpenAPI: `http://localhost:8080/v3/api-docs`
 
-Pela interface é possível executar os dois endpoints direto do navegador.
+A versão hospedada também está no ar, com a mesma documentação:
+
+- Swagger UI: https://segi-cifravernam.onrender.com/swagger-ui/index.html
+- API: https://segi-cifravernam.onrender.com
 
 ## Erros
 
-Requisições inválidas retornam o status **400 Bad Request** com um corpo JSON no formato:
+Requisições inválidas retornam **400 Bad Request** com um corpo JSON no formato:
 
 ```json
-{
-  "erro": "mensagem explicando o problema"
-}
+{ "erro": "mensagem explicando o problema" }
 ```
 
 Situações que geram erro 400:
@@ -136,45 +123,11 @@ Situações que geram erro 400:
 | Situação | Endpoint |
 |---|---|
 | Texto e chave com tamanhos diferentes | `/cifrar` |
-| Texto cifrado com tamanho diferente de 8 bits para cada caractere da chave | `/decifrar` |
+| Texto cifrado com tamanho diferente de 8 bits por caractere da chave | `/decifrar` |
 | Texto cifrado com caracteres diferentes de `0` e `1` | `/decifrar` |
 | Campo vazio ou ausente (`textoClaro`, `textoCifrado` ou `chave`) | ambos |
 | `textoClaro` ou `chave` com mais de 255 caracteres | ambos |
 | `textoCifrado` com mais de 2048 caracteres | `/decifrar` |
-
-Exemplo (texto com 3 caracteres e chave com 2):
-
-```json
-{
-  "textoClaro": "OLA",
-  "chave": "CH"
-}
-```
-
-Resposta (`400 Bad Request`):
-
-```json
-{
-  "erro": "O texto claro e a chave devem ter o mesmo tamanho!"
-}
-```
-
-Exemplo (texto claro vazio):
-
-```json
-{
-  "textoClaro": "",
-  "chave": "A"
-}
-```
-
-Resposta (`400 Bad Request`):
-
-```json
-{
-  "erro": "O texto claro é obrigatório!"
-}
-```
 
 ## Testes automatizados
 
@@ -186,7 +139,7 @@ Na pasta `segi`:
 
 (no Linux ou macOS: `./mvnw test`)
 
-Os testes cobrem a cifragem, o ciclo completo cifrar e decifrar e os casos de erro.
+Os testes cobrem a cifragem, o ciclo completo cifrar/decifrar e os casos de erro.
 
 ## Estrutura do projeto
 
@@ -196,6 +149,7 @@ segi/
 └── src/
     ├── main/java/com/segi/
     │   ├── SegiApplication.java      # classe principal
+    │   ├── config/OpenApiConfig.java # configuração do OpenAPI/Swagger
     │   ├── controller/               # endpoints REST e tratamento de erros
     │   ├── dto/                      # objetos de requisição e resposta
     │   └── service/CifraService.java # lógica de cifrar e decifrar (XOR)
