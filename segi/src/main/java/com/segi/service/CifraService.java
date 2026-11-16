@@ -1,7 +1,9 @@
 package com.segi.service;
 
-import java.nio.charset.StandardCharsets;
+import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+@Service
 public class CifraService {
 
     public String cifrar(String textoClaro, String chave) {
@@ -38,7 +40,7 @@ public class CifraService {
             throw new IllegalArgumentException("O texto cifrado deve ter 8 bits para cada caractere da chave!");
         }
         if (!textoCifrado.matches("[01]+")) {
-            throw new IllegalArgumentException("Texto com caracteres especiais");
+            throw new IllegalArgumentException("A string cifrada só pode contar 0 e 1!");
         }
         StringBuilder resultado = new StringBuilder();
 
