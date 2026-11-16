@@ -10,7 +10,7 @@ A cifra aplica a operação XOR, bit a bit, entre cada caractere do texto e o ca
 
 - A **chave deve ter exatamente o mesmo tamanho do texto**, como na definição da Cifra de Vernam.
 - O texto cifrado é devolvido como uma sequência de bits (`0` e `1`), com 8 bits por caractere, ou seja, 8 vezes o tamanho da chave.
-- Use apenas caracteres ASCII (letras sem acento, números e símbolos do teclado).
+- Use apenas caracteres ASCII no padrão UTF-8.
 
 Exemplo: o texto `OLA` com a chave `CHT` gera `000011000000010000010101`.
 
